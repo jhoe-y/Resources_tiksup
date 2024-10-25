@@ -1,0 +1,5 @@
+Ejecutar primero installer_docker.sh para instalar docker 
+en las instancias que desee y agregar docker al grupo $USER
+
+Luego ejecutar tiksup_installer.sh para instalar el proyecto
+y crear el archivo con las variables de entorno.
