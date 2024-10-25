@@ -6,7 +6,7 @@ cd tiksup
 
 # Crear archivo .env y agregar el contenido en un solo bloque
 cat <<EOF > .env
-SECRET_KEY=
+SECRET_KEY=ZmFkZTc1MzEtYzI1Ni00OWY2LTk2NmItNjU5NWMzYzAzMTI4Cg==
 
 KAFKA_SERVER=161.132.40.126:9092
 KAFKA_TOPIC=tiksup-user-data
