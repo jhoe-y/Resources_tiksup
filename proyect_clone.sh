@@ -32,8 +32,11 @@ else
   # Segunda parte del script (una vez que el usuario ya tiene permisos de Docker)
 
   # Clonar el repositorio
+  cd /tmp
   git clone https://github.com/jsusmachaca/tiksup.git
   cd tiksup
+
+  gunzip movies.json.gz
 
   # Crear archivo .env y agregar el contenido en un solo bloque
   cat <<EOF > .env
@@ -71,9 +74,6 @@ WORKER_URL=http://worker:8081
 
 GRPC_HOST=
 EOF
-  rm -rf movies
-
-  sudo tar -xzf mivies.tar.gz
   # Iniciar los contenedores con Docker Compose usando el archivo .env
   docker compose --env-file .env up -d
 
