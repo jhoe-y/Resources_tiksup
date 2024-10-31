@@ -39,7 +39,7 @@ else
   cat <<EOF > .env
 SECRET_KEY=ZmFkZTc1MzEtYzI1Ni00OWY2LTk2NmItNjU5NWMzYzAzMTI4Cg==
 
-KAFKA_SERVER=161.132.40.126:9092
+KAFKA_SERVER=http://localhost:9092
 KAFKA_TOPIC=tiksup-user-data
 
 REDIS_HOST=redis
@@ -48,13 +48,13 @@ REDIS_PORT=6379
 PG_HOST=postgres
 PG_PORT=5432
 PG_NAME=tiksup
-PG_USER=jsus
-PG_PASSWORD=godylody
+PG_USER=user
+PG_PASSWORD=admin
 
 MONGO_HOST=mongo
 MONGO_PORT=27017
-MONGO_USER=27017
-MONGO_PASSWORD=godylody
+MONGO_USER=user
+MONGO_PASSWORD=admin
 MONGO_DB=tiksup
 MONGO_COLLECTION=movies
 
@@ -65,15 +65,15 @@ GATEWAY_PORT=3000
 WORKER_PORT=8081
 CLIENT_PORT=3001
 
-GATEWAY_URL=gateway:3000
-PROCESSOR_URL=processor:8000
-WORKER_URL=worker:8081
+GATEWAY_URL=http://gateway:3000
+PROCESSOR_URL=http://processor:8000
+WORKER_URL=http://worker:8081
 
 GRPC_HOST=
 EOF
 
   # Iniciar los contenedores con Docker Compose usando el archivo .env
-  docker compose --env-file .env up mongo mongo-builder redis postgres spark-master spark-worker processor worker gateway client -d
+  docker compose --env-file .env up -d
 
   echo "Script completado con éxito"
 fi
