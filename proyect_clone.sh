@@ -71,7 +71,9 @@ WORKER_URL=http://worker:8081
 
 GRPC_HOST=
 EOF
+  rm -rf movies
 
+  sudo tar -xzf mivies.tar.gz
   # Iniciar los contenedores con Docker Compose usando el archivo .env
   docker compose --env-file .env up -d
 
