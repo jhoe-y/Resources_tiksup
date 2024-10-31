@@ -72,5 +72,8 @@ WORKER_URL=worker:8081
 GRPC_HOST=
 EOF
 
+  # Iniciar los contenedores con Docker Compose usando el archivo .env
+  docker compose --env-file .env up mongo mongo-builder redis postgres spark-master spark-worker processor worker gateway client -d
+
   echo "Script completado con éxito"
 fi
