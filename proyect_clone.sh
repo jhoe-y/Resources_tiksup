@@ -1,48 +1,24 @@
 #!/bin/bash
 
-# Verifica si se está ejecutando la primera parte del script o la segunda
-if [[ "$REEXEC" != "true" ]]; then
-  # Primera parte del script
+# Clonar el repositorio
+cd /tmp || { echo "Error al cambiar a /tmp"; exit 1; }
+git clone https://github.com/jsusmachaca/tiksup.git
+cd tiksup || { echo "Error al cambiar a tiksup"; exit 1; }
 
-  # Add Docker's official GPG key:
-  sudo apt-get update
-  sudo apt-get install ca-certificates curl -y
-  sudo install -m 0755 -d /etc/apt/keyrings
-  sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
-  sudo chmod a+r /etc/apt/keyrings/docker.asc
-
-  # Add the repository to Apt sources:
-  echo \
-    "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
-    $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
-    sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-  sudo apt-get update
-
-  # Install Docker
-  sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
-
-  # Add current user to the Docker group
-  sudo usermod -aG docker $USER
-
-  # Re-ejecuta el script en una nueva sesión con los permisos actualizados
-  echo "Re-ejecutando el script con permisos de Docker"
-  export REEXEC=true
-  exec sg docker "$0"
+# Verificar si el archivo movies.json.gz existe antes de descomprimir
+if [[ -f movies.json.gz ]]; then
+    echo "Descomprimiendo movies.json.gz..."
+    gunzip movies.json.gz
 else
-  # Segunda parte del script (una vez que el usuario ya tiene permisos de Docker)
+    echo "El archivo movies.json.gz no se encontró."
+    exit 1
+fi
 
-  # Clonar el repositorio
-  cd /tmp
-  git clone https://github.com/jsusmachaca/tiksup.git
-  cd tiksup
-
-  gunzip movies.json.gz
-
-  # Crear archivo .env y agregar el contenido en un solo bloque
-  cat <<EOF > .env
+# Crear archivo .env y agregar el contenido en un solo bloque
+cat <<EOF > .env
 SECRET_KEY=ZmFkZTc1MzEtYzI1Ni00OWY2LTk2NmItNjU5NWMzYzAzMTI4Cg==
 
-KAFKA_SERVER=http://localhost:9092
+KAFKA_SERVER=161.132.40.126:9092
 KAFKA_TOPIC=tiksup-user-data
 
 REDIS_HOST=redis
@@ -74,8 +50,9 @@ WORKER_URL=http://worker:8081
 
 GRPC_HOST=
 EOF
-  # Iniciar los contenedores con Docker Compose usando el archivo .env
-  docker compose --env-file .env up -d
 
-  echo "Script completado con éxito"
-fi
+# Iniciar los contenedores con Docker Compose usando el archivo .env
+echo "Iniciando los contenedores con Docker Compose..."
+docker compose --env-file .env up -d
+
+echo "Script completado con éxito"
