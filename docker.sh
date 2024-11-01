@@ -19,8 +19,3 @@
 
   # Add current user to the Docker group
   sudo usermod -aG docker $USER
-
-  # Re-ejecuta el script en una nueva sesión con los permisos actualizados
-  echo "Re-ejecutando el script con permisos de Docker"
-  export REEXEC=true
-  exec sg docker "$0"
