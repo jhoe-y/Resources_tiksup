@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kafka
+  template:
+    metadata:
+      labels:
+        app: kafka
+    spec:
+      containers:
+      - name: kafka
+        image: mcjesus/kafka:alpine1.0
+        envFrom:
+          - configMapRef:
+              name: app-config
+        ports:
+          - containerPort: 9092
+        command: ["/kafka_2.13-3.8.0/bin/kafka-topics.sh", "--create", "--bootstrap-server", "kafka", "--topic", "$(KAFKA_TOPIC)"]
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka
+spec:
+  selector:
+    app: kafka
+  ports:
+    - protocol: TCP
+      port: 9092
+      targetPort: 9092
+  type: ClusterIP

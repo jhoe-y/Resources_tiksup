@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: client
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: client
+  template:
+    metadata:
+      labels:
+        app: client
+    spec:
+      containers:
+      - name: client
+        image: node:22-alpine3.19
+        ports:
+          - containerPort: 3000  # Puerto del cliente
+        env:
+          - name: GATEWAY_URL
+            valueFrom:
+              configMapKeyRef:
+                name: app-config
+                key: GATEWAY_URL
+          - name: WORKER_URL
+            valueFrom:
+              configMapKeyRef:
+                name: app-config
+                key: WORKER_URL
+          - name: PROCESSOR_URL
+            valueFrom:
+              configMapKeyRef:
+                name: app-config
+                key: PROCESSOR_URL
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: client
+spec:
+  selector:
+    app: client
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000
+  type: ClusterIP

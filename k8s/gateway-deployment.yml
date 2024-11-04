@@ -1,0 +1,143 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gateway
+  template:
+    metadata:
+      labels:
+        app: gateway
+    spec:
+      containers:
+      - name: gateway
+        image: node:22-alpine3.19
+        ports:
+          - containerPort: 3000  # Puerto del gateway
+        env:
+          - name: KAFKA_SERVER
+            valueFrom:
+              configMapKeyRef:
+                name: app-config
+                key: KAFKA_SERVER
+          - name: KAFKA_TOPIC
+            valueFrom:
+              configMapKeyRef:
+                name: app-config
+                key: KAFKA_TOPIC
+          - name: REDIS_HOST
+            valueFrom:
+              configMapKeyRef:
+                name: app-config
+                key: REDIS_HOST
+          - name: REDIS_PORT
+            valueFrom:
+              configMapKeyRef:
+                name: app-config
+                key: REDIS_PORT
+          - name: PG_HOST
+            valueFrom:
+              configMapKeyRef:
+                name: app-config
+                key: PG_HOST
+          - name: PG_PORT
+            valueFrom:
+              configMapKeyRef:
+                name: app-config
+                key: PG_PORT
+          - name: PG_NAME
+            valueFrom:
+              configMapKeyRef:
+                name: app-config
+                key: PG_NAME
+          - name: SPARK_HOST
+            valueFrom:
+              configMapKeyRef:
+                name: app-config
+                key: SPARK_HOST
+          - name: SPARK_PORT
+            valueFrom:
+              configMapKeyRef:
+                name: app-config
+                key: SPARK_PORT
+          - name: GATEWAY_PORT
+            valueFrom:
+              configMapKeyRef:
+                name: app-config
+                key: GATEWAY_PORT
+          - name: WORKER_PORT
+            valueFrom:
+              configMapKeyRef:
+                name: app-config
+                key: WORKER_PORT
+          - name: CLIENT_PORT
+            valueFrom:
+              configMapKeyRef:
+                name: app-config
+                key: CLIENT_PORT
+          - name: GATEWAY_URL
+            valueFrom:
+              configMapKeyRef:
+                name: app-config
+                key: GATEWAY_URL
+          - name: PROCESSOR_URL
+            valueFrom:
+              configMapKeyRef:
+                name: app-config
+                key: PROCESSOR_URL
+          - name: WORKER_URL
+            valueFrom:
+              configMapKeyRef:
+                name: app-config
+                key: WORKER_URL
+          - name: SECRET_KEY
+            valueFrom:
+              secretKeyRef:
+                name: app-secrets
+                key: SECRET_KEY
+          - name: PG_USER
+            valueFrom:
+              secretKeyRef:
+                name: app-secrets
+                key: PG_USER
+          - name: PG_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: app-secrets
+                key: PG_PASSWORD
+          - name: MONGO_USER
+            valueFrom:
+              secretKeyRef:
+                name: app-secrets
+                key: MONGO_USER
+          - name: MONGO_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: app-secrets
+                key: MONGO_PASSWORD
+          - name: MONGO_DB
+            valueFrom:
+              secretKeyRef:
+                name: app-secrets
+                key: MONGO_DB
+          - name: MONGO_COLLECTION
+            valueFrom:
+              secretKeyRef:
+                name: app-secrets
+                key: MONGO_COLLECTION
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gateway
+spec:
+  selector:
+    app: gateway
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000
+  type: ClusterIP

@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: processor
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: processor
+  template:
+    metadata:
+      labels:
+        app: processor
+    spec:
+      containers:
+      - name: processor
+        image: python:3.12-slim
+        ports:
+          - containerPort: 8000  # Puerto del processor
+        env:
+          - name: KAFKA_SERVER
+            valueFrom:
+              configMapKeyRef:
+                name: app-config
+                key: KAFKA_SERVER
+          - name: REDIS_HOST
+            valueFrom:
+              configMapKeyRef:
+                name: app-config
+                key: REDIS_HOST
+          - name: PG_HOST
+            valueFrom:
+              configMapKeyRef:
+                name: app-config
+                key: PG_HOST
+          - name: PG_PORT
+            valueFrom:
+              configMapKeyRef:
+                name: app-config
+                key: PG_PORT
+          - name: PG_NAME
+            valueFrom:
+              configMapKeyRef:
+                name: app-config
+                key: PG_NAME
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: processor
+spec:
+  selector:
+    app: processor
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000
+  type: ClusterIP
